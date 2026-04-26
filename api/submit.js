@@ -1,6 +1,6 @@
 export const config = { runtime: 'edge' };
 
-const N8N_WEBHOOK = "https://swing-snow-definitely-christmas.trycloudflare.com/webhook/lead-capture";
+const N8N_WEBHOOK = "https://viking-mandatory-jacksonville-gif.trycloudflare.com/webhook/lead-capture";
 
 export default async function handler(req) {
   if (req.method === 'OPTIONS') {
