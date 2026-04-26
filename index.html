@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NexaFlow AI — Request a Live Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  /* ── RESET & VARS ───────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #07080d;
+    --surface:   #0e1018;
+    --border:    rgba(255,255,255,0.07);
+    --amber:     #f0a500;
+    --amber-dim: #c8870a;
+    --amber-glow:rgba(240,165,0,0.18);
+    --text:      #e8eaf0;
+    --muted:     #737a96;
+    --success:   #22c55e;
+    --font-head: 'Cormorant Garamond', Georgia, serif;
+    --font-body: 'Syne', sans-serif;
+    --radius:    14px;
+    --trans:     0.25s cubic-bezier(.4,0,.2,1);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.65;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE OVERLAY ──────────────────────────────── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6;
+  }
+
+  /* ── AMBIENT GLOW ───────────────────────────────── */
+  .glow-orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .glow-orb-1 {
+    width: 600px; height: 600px;
+    top: -200px; right: -100px;
+    background: radial-gradient(circle, rgba(240,165,0,0.12) 0%, transparent 70%);
+    animation: drift 18s ease-in-out infinite alternate;
+  }
+  .glow-orb-2 {
+    width: 400px; height: 400px;
+    bottom: -100px; left: -100px;
+    background: radial-gradient(circle, rgba(99,102,241,0.10) 0%, transparent 70%);
+    animation: drift 22s ease-in-out infinite alternate-reverse;
+  }
+  @keyframes drift {
+    from { transform: translate(0, 0); }
+    to   { transform: translate(40px, 30px); }
+  }
+
+  /* ── LAYOUT ─────────────────────────────────────── */
+  .wrapper {
+    position: relative; z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr 480px;
+    gap: 0;
+    min-height: 100vh;
+  }
+
+  /* ── LEFT PANEL ─────────────────────────────────── */
+  .left {
+    padding: 60px 64px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 1px solid var(--border);
+  }
+
+  .logo {
+    display: flex; align-items: center; gap: 10px;
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text);
+    text-decoration: none;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.1s forwards;
+  }
+  .logo-mark {
+    width: 32px; height: 32px;
+    background: var(--amber);
+    border-radius: 8px;
+    display: grid; place-items: center;
+    font-size: 16px;
+  }
+
+  .hero { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 60px 0; }
+
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--amber);
+    font-weight: 600;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.2s forwards;
+  }
+  .eyebrow::before {
+    content: '';
+    width: 24px; height: 1px;
+    background: var(--amber);
+    display: inline-block;
+  }
+
+  h1 {
+    font-family: var(--font-head);
+    font-size: clamp(42px, 5vw, 68px);
+    font-weight: 600;
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.3s forwards;
+  }
+  h1 em {
+    font-style: italic;
+    color: var(--amber);
+  }
+
+  .subtitle {
+    font-size: 16px;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 420px;
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.4s forwards;
+  }
+
+  .stats {
+    display: flex; gap: 40px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.5s forwards;
+  }
+  .stat-num {
+    font-family: var(--font-head);
+    font-size: 36px;
+    font-weight: 600;
+    color: var(--text);
+    display: block;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+
+  .social-proof {
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.6s forwards;
+  }
+  .avatars {
+    display: flex; align-items: center;
+    margin-bottom: 10px;
+  }
+  .avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    border: 2px solid var(--bg);
+    margin-left: -8px;
+    background: linear-gradient(135deg, #334155, #1e293b);
+    display: grid; place-items: center;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .avatar:first-child { margin-left: 0; }
+  .proof-text { font-size: 13px; color: var(--muted); }
+  .proof-text strong { color: var(--text); }
+
+  /* ── RIGHT PANEL (FORM) ─────────────────────────── */
+  .right {
+    background: var(--surface);
+    padding: 60px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+  .form-header { margin-bottom: 36px; opacity: 0; animation: fadeUp 0.6s ease 0.2s forwards; }
+  .form-header h2 {
+    font-family: var(--font-head);
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .form-header p { font-size: 14px; color: var(--muted); }
+
+  .form { display: flex; flex-direction: column; gap: 16px; }
+
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  .field { display: flex; flex-direction: column; gap: 7px; opacity: 0; animation: fadeUp 0.5s ease forwards; }
+  .field:nth-child(1) { animation-delay: 0.25s; }
+  .field:nth-child(2) { animation-delay: 0.30s; }
+  .field:nth-child(3) { animation-delay: 0.35s; }
+  .field:nth-child(4) { animation-delay: 0.40s; }
+  .field:nth-child(5) { animation-delay: 0.45s; }
+  .field:nth-child(6) { animation-delay: 0.50s; }
+  .field:nth-child(7) { animation-delay: 0.55s; }
+
+  label {
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  label span { color: var(--amber); margin-left: 2px; }
+
+  input, textarea, select {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 14px;
+    padding: 12px 14px;
+    outline: none;
+    transition: border-color var(--trans), background var(--trans), box-shadow var(--trans);
+    width: 100%;
+    -webkit-appearance: none;
+  }
+  input::placeholder, textarea::placeholder { color: #3d4259; }
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--amber);
+    background: rgba(240,165,0,0.05);
+    box-shadow: 0 0 0 3px var(--amber-glow);
+  }
+  textarea { resize: vertical; min-height: 90px; }
+
+  .submit-btn {
+    margin-top: 8px;
+    background: var(--amber);
+    color: #07080d;
+    border: none;
+    border-radius: 10px;
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    padding: 15px 24px;
+    cursor: pointer;
+    transition: background var(--trans), transform var(--trans), box-shadow var(--trans);
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    opacity: 0;
+    animation: fadeUp 0.5s ease 0.6s forwards;
+  }
+  .submit-btn:hover:not(:disabled) {
+    background: #fbbf24;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 28px rgba(240,165,0,0.30);
+  }
+  .submit-btn:active:not(:disabled) { transform: translateY(0); }
+  .submit-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+
+  .btn-icon { font-size: 16px; transition: transform 0.2s; }
+  .submit-btn:hover .btn-icon { transform: translateX(3px); }
+
+  /* Spinner */
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2px solid rgba(0,0,0,0.3);
+    border-top-color: #07080d;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .privacy-note {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 4px;
+    opacity: 0;
+    animation: fadeUp 0.5s ease 0.65s forwards;
+  }
+  .privacy-note a { color: var(--muted); text-decoration: underline; text-underline-offset: 2px; }
+
+  /* ── SUCCESS STATE ───────────────────────────────── */
+  .success-state {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 20px 0;
+    animation: fadeUp 0.5s ease forwards;
+  }
+  .success-icon {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: rgba(34,197,94,0.12);
+    border: 1px solid rgba(34,197,94,0.3);
+    display: grid; place-items: center;
+    font-size: 32px;
+    margin-bottom: 24px;
+  }
+  .success-state h3 {
+    font-family: var(--font-head);
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .success-state p { font-size: 14px; color: var(--muted); line-height: 1.7; max-width: 280px; }
+  .success-badge {
+    margin-top: 24px;
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(240,165,0,0.10);
+    border: 1px solid rgba(240,165,0,0.20);
+    border-radius: 100px;
+    padding: 8px 18px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--amber);
+    letter-spacing: 0.05em;
+  }
+
+  /* ── ERROR TOAST ─────────────────────────────────── */
+  .error-toast {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    background: rgba(239,68,68,0.10);
+    border: 1px solid rgba(239,68,68,0.25);
+    border-radius: 9px;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: #fca5a5;
+    margin-bottom: 4px;
+  }
+
+  /* ── ANIMATIONS ─────────────────────────────────── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── MOBILE ─────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .wrapper { grid-template-columns: 1fr; }
+    .left {
+      padding: 40px 28px 32px;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+    }
+    .right { position: static; height: auto; padding: 40px 28px 60px; }
+    .stats { gap: 28px; }
+    .field-row { grid-template-columns: 1fr; }
+    h1 { font-size: 42px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="glow-orb glow-orb-1"></div>
+<div class="glow-orb glow-orb-2"></div>
+
+<div class="wrapper">
+
+  <!-- ── LEFT PANEL ───────────────────────────────── -->
+  <div class="left">
+    <a href="#" class="logo">
+      <div class="logo-mark">⚡</div>
+      NexaFlow AI
+    </a>
+
+    <div class="hero">
+      <div class="eyebrow">AI-Powered Automation</div>
+      <h1>Turn leads into<br/><em>revenue</em>,<br/>automatically.</h1>
+      <p class="subtitle">
+        NexaFlow captures, scores, and routes every inbound lead with precision —
+        so your sales team only talks to prospects who are ready to buy.
+      </p>
+      <div class="stats">
+        <div>
+          <span class="stat-num">3×</span>
+          <span class="stat-label">Faster follow-up</span>
+        </div>
+        <div>
+          <span class="stat-num">92%</span>
+          <span class="stat-label">Accuracy rate</span>
+        </div>
+        <div>
+          <span class="stat-num">15 min</span>
+          <span class="stat-label">Avg. response</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="social-proof">
+      <div class="avatars">
+        <div class="avatar" style="background:linear-gradient(135deg,#7c3aed,#4f46e5)">JM</div>
+        <div class="avatar" style="background:linear-gradient(135deg,#059669,#065f46)">SR</div>
+        <div class="avatar" style="background:linear-gradient(135deg,#dc2626,#991b1b)">AL</div>
+        <div class="avatar" style="background:linear-gradient(135deg,#d97706,#92400e)">PK</div>
+      </div>
+      <p class="proof-text">
+        Trusted by <strong>200+ B2B teams</strong> across North America &amp; Europe
+      </p>
+    </div>
+  </div>
+
+  <!-- ── RIGHT PANEL (FORM) ────────────────────────── -->
+  <div class="right">
+
+    <div id="formWrap">
+      <div class="form-header">
+        <h2>Request a Live Demo</h2>
+        <p>Fill in your details — our team will reach out within one business day.</p>
+      </div>
+
+      <div id="errorToast" class="error-toast">
+        <span>⚠</span>
+        <span id="errorMsg">Something went wrong. Please try again.</span>
+      </div>
+
+      <form class="form" id="leadForm" novalidate>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="name">Full Name <span>*</span></label>
+            <input id="name" name="name" type="text" placeholder="Jane Smith" required autocomplete="name" />
+          </div>
+          <div class="field">
+            <label for="email">Work Email <span>*</span></label>
+            <input id="email" name="email" type="email" placeholder="jane@company.com" required autocomplete="email" />
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="company">Company <span>*</span></label>
+            <input id="company" name="company" type="text" placeholder="Acme Corp" required autocomplete="organization" />
+          </div>
+          <div class="field">
+            <label for="job_title">Job Title</label>
+            <input id="job_title" name="job_title" type="text" placeholder="VP of Sales" autocomplete="organization-title" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="phone">Phone Number</label>
+          <input id="phone" name="phone" type="tel" placeholder="+1 (555) 000-0000" autocomplete="tel" />
+        </div>
+
+        <div class="field">
+          <label for="message">What are you looking to automate? <span>*</span></label>
+          <textarea id="message" name="message" placeholder="Tell us about your current lead process, team size, or any specific pain points…" required></textarea>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">
+          <span id="btnText">Request Your Demo</span>
+          <span class="btn-icon" id="btnIcon">→</span>
+          <span class="spinner" id="spinner"></span>
+        </button>
+
+        <p class="privacy-note">
+          🔒 Your data is safe. We never share or sell contact information.
+        </p>
+
+      </form>
+    </div>
+
+    <div class="success-state" id="successState">
+      <div class="success-icon">✓</div>
+      <h3>You're on the list!</h3>
+      <p>Thanks for reaching out. Our team will review your request and be in touch within one business day.</p>
+      <div class="success-badge">⚡ Lead received · AI scoring in progress</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────────────────
+//  CONFIGURATION — Replace with your Google Apps Script URL
+//  OR your n8n webhook URL for instant mode
+// ─────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────
+//  HOW TO GET YOUR WEBHOOK URL:
+//    1. Open n8n → your "WF-01: Lead Webhook" workflow
+//    2. Click the "Webhook - Lead Form" node
+//    3. Make sure the workflow is ACTIVE (toggle top-right)
+//    4. Copy the PRODUCTION URL — looks like:
+//       https://your-n8n.com/webhook/lead-capture
+//    5. Paste it below, replacing the placeholder
+// ─────────────────────────────────────────────────────────
+const ENDPOINT = "https://swing-snow-definitely-christmas.trycloudflare.com/webhook/lead-capture";
+
+// ─────────────────────────────────────────────────────────
+const form    = document.getElementById('leadForm');
+const btn     = document.getElementById('submitBtn');
+const btnText = document.getElementById('btnText');
+const btnIcon = document.getElementById('btnIcon');
+const spinner = document.getElementById('spinner');
+const formWrap    = document.getElementById('formWrap');
+const successState = document.getElementById('successState');
+const errorToast  = document.getElementById('errorToast');
+const errorMsg    = document.getElementById('errorMsg');
+
+function setLoading(yes) {
+  btn.disabled = yes;
+  btnText.textContent = yes ? 'Sending…' : 'Request Your Demo';
+  btnIcon.style.display = yes ? 'none' : '';
+  spinner.style.display = yes ? 'block' : 'none';
+}
+
+function showError(msg) {
+  errorMsg.textContent = msg;
+  errorToast.style.display = 'flex';
+  setTimeout(() => errorToast.style.display = 'none', 6000);
+}
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const name    = form.name.value.trim();
+  const email   = form.email.value.trim();
+  const company = form.company.value.trim();
+  const message = form.message.value.trim();
+
+  if (!name || !email || !company || !message) {
+    showError('Please fill in all required fields.');
+    return;
+  }
+  const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRx.test(email)) {
+    showError('Please enter a valid email address.');
+    return;
+  }
+
+  setLoading(true);
+  errorToast.style.display = 'none';
+
+  const payload = {
+    name,
+    email,
+    company,
+    job_title:  form.job_title.value.trim(),
+    phone:      form.phone.value.trim(),
+    message,
+    source:     'nexaflow_demo_page'
+  };
+
+  try {
+    const res = await fetch(ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) throw new Error(`Server responded ${res.status}`);
+
+    // Show success
+    formWrap.style.display = 'none';
+    successState.style.display = 'flex';
+
+  } catch (err) {
+    console.error(err);
+    showError('Could not submit. Please check your connection and try again.');
+    setLoading(false);
+  }
+});
+</script>
+</body>
+</html>
