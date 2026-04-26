@@ -1,39 +1,26 @@
-export const config = { runtime: 'edge' };
-
-export default async function handler(req) {
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type'
-  };
+export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') {
-    return new Response(null, { status: 200, headers: corsHeaders });
+    return res.status(200).end();
   }
 
   try {
-    const body = await req.text();
-
-    const n8nRes = await fetch(
+    const response = await fetch(
       "https://viking-mandatory-jacksonville-gif.trycloudflare.com/webhook/lead-capture",
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: body
+        body: JSON.stringify(req.body)
       }
     );
 
-    const text = await n8nRes.text();
-
-    return new Response(text, {
-      status: n8nRes.status,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    });
+    const text = await response.text();
+    return res.status(response.status).send(text);
 
   } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    });
+    return res.status(500).json({ error: err.message });
   }
 }
